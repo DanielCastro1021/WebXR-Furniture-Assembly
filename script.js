@@ -239,12 +239,16 @@ function placeObject() {
 
 function loadFurnitureModels() {
   var loader = new GLTFLoader();
+  let x_scl = 0.5,
+    y_scl = 0.5,
+    z_scl = 0.5;
+
   //Model 1
   loader.load(
     './model/step-1.glb',
     (gltf) => {
       model1 = gltf.scene;
-      model1.scale.set(1, 1, 1);
+      model1.scale.set(x_scl, y_scl, z_scl);
       model1.castShadow = true;
       model1.receiveShadow = true;
     },
@@ -256,7 +260,7 @@ function loadFurnitureModels() {
     './model/step-2.glb',
     (gltf) => {
       model2 = gltf.scene;
-      model2.scale.set(1, 1, 1);
+      model2.scale.set(x_scl, y_scl, z_scl);
       model2.castShadow = true;
       model2.receiveShadow = true;
     },
@@ -268,7 +272,7 @@ function loadFurnitureModels() {
     './model/step-3.glb',
     (gltf) => {
       model3 = gltf.scene;
-      model3.scale.set(1, 1, 1);
+      model3.scale.set(x_scl, y_scl, z_scl);
       model3.castShadow = true;
       model3.receiveShadow = true;
     },
@@ -280,7 +284,7 @@ function loadFurnitureModels() {
     './model/step-4.glb',
     (gltf) => {
       model4 = gltf.scene;
-      model4.scale.set(1, 1, 1);
+      model4.scale.set(x_scl, y_scl, z_scl);
       model4.castShadow = true;
       model4.receiveShadow = true;
     },
@@ -292,7 +296,7 @@ function loadFurnitureModels() {
     './model/step-5.glb',
     (gltf) => {
       model5 = gltf.scene;
-      model5.scale.set(1, 1, 1);
+      model5.scale.set(x_scl, y_scl, z_scl);
       model5.castShadow = true;
       model5.receiveShadow = true;
     },
@@ -304,7 +308,7 @@ function loadFurnitureModels() {
     './model/step-6.glb',
     (gltf) => {
       model6 = gltf.scene;
-      model6.scale.set(1, 1, 1);
+      model6.scale.set(x_scl, y_scl, z_scl);
       model6.castShadow = true;
       model6.receiveShadow = true;
     },
@@ -317,7 +321,7 @@ function loadFurnitureModels() {
     './model/step-7.glb',
     (gltf) => {
       model7 = gltf.scene;
-      model7.scale.set(1, 1, 1);
+      model7.scale.set(x_scl, y_scl, z_scl);
       model7.castShadow = true;
       model7.receiveShadow = true;
     },
