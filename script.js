@@ -11,7 +11,13 @@ let xrRefSpace = null;
 // Canvas OpenGL context used for rendering
 let gl = null;
 // Model placed on a surface or plane
-let model = null;
+let model1 = null,
+  model2 = null,
+  model3 = null,
+  model4 = null,
+  model5 = null,
+  model6 = null,
+  model7 = null;
 // XR Hit test object
 let xrHitTestSource = null;
 // XR renderer
@@ -135,6 +141,7 @@ function initScene(gl, session) {
     0.1,
     1000
   );
+  /*
   // load our gltf model
   var loader = new GLTFLoader();
   loader.load(
@@ -148,6 +155,8 @@ function initScene(gl, session) {
     () => {},
     (error) => console.error(error)
   );
+*/
+  loadFurnitureModels();
 
   var light = new THREE.PointLight(0xffffff, 2, 100); // soft white light
   light.position.z = 1;
@@ -174,20 +183,154 @@ function initScene(gl, session) {
   reticle.visible = false;
   scene.add(reticle);
 }
+
+var click = 0;
 // Place VR Objet
 function placeObject() {
-  if (reticle.visible && model) {
+  if (
+    reticle.visible &&
+    model1 &&
+    model2 &&
+    model3 &&
+    model4 &&
+    model5 &&
+    model6 &&
+    model7
+  ) {
+    click++;
     reticle.visible = false;
-    model.position.setFromMatrixPosition(reticle.matrix);
-    //scene.remove(reticle);
-    scene.add(model);
+    if (click == 1) {
+      model1.position.setFromMatrixPosition(reticle.matrix);
+      scene.remove(reticle);
+      scene.add(model1);
+    }
+    if (click == 2) {
+      model2.position.setFromMatrixPosition(model1.matrix);
+      scene.remove(model1);
+      scene.add(model2);
+    }
+    if (click == 3) {
+      model3.position.setFromMatrixPosition(model2.matrix);
+      scene.remove(model2);
+      scene.add(model3);
+    }
+    if (click == 4) {
+      model4.position.setFromMatrixPosition(model3.matrix);
+      scene.remove(model3);
+      scene.add(model4);
+    }
+    if (click == 5) {
+      model5.position.setFromMatrixPosition(model4.matrix);
+      scene.remove(model4);
+      scene.add(model5);
+    }
+    if (click == 6) {
+      model6.position.setFromMatrixPosition(model5.matrix);
+      scene.remove(model5);
+      scene.add(model6);
+    }
+    if (click == 7) {
+      model7.position.setFromMatrixPosition(model6.matrix);
+      scene.remove(model6);
+      scene.add(model7);
+    }
   }
 }
 
-window.onload = () => {
+function loadFurnitureModels() {
+  var loader = new GLTFLoader();
+  //Model 1
+  loader.load(
+    './model/step-1.glb',
+    (gltf) => {
+      model1 = gltf.scene;
+      model1.scale.set(1, 1, 1);
+      model1.castShadow = true;
+      model1.receiveShadow = true;
+    },
+    (xhr) => console.log((xhr.loaded / xhr.total) * 100 + '% loaded'),
+    (error) => console.error(error)
+  );
+  //Model 2
+  loader.load(
+    './model/step-2.glb',
+    (gltf) => {
+      model2 = gltf.scene;
+      model2.scale.set(1, 1, 1);
+      model2.castShadow = true;
+      model2.receiveShadow = true;
+    },
+    (xhr) => console.log((xhr.loaded / xhr.total) * 100 + '% loaded'),
+    (error) => console.error(error)
+  );
+  //Model 3
+  loader.load(
+    './model/step-3.glb',
+    (gltf) => {
+      model3 = gltf.scene;
+      model3.scale.set(1, 1, 1);
+      model3.castShadow = true;
+      model3.receiveShadow = true;
+    },
+    (xhr) => console.log((xhr.loaded / xhr.total) * 100 + '% loaded'),
+    (error) => console.error(error)
+  );
+  //Model 4
+  loader.load(
+    './model/step-4.glb',
+    (gltf) => {
+      model4 = gltf.scene;
+      model4.scale.set(1, 1, 1);
+      model4.castShadow = true;
+      model4.receiveShadow = true;
+    },
+    (xhr) => console.log((xhr.loaded / xhr.total) * 100 + '% loaded'),
+    (error) => console.error(error)
+  );
+  //Model 5
+  loader.load(
+    './model/step-5.glb',
+    (gltf) => {
+      model5 = gltf.scene;
+      model5.scale.set(1, 1, 1);
+      model5.castShadow = true;
+      model5.receiveShadow = true;
+    },
+    (xhr) => console.log((xhr.loaded / xhr.total) * 100 + '% loaded'),
+    (error) => console.error(error)
+  );
+  //Model 6
+  loader.load(
+    './model/step-6.glb',
+    (gltf) => {
+      model6 = gltf.scene;
+      model6.scale.set(1, 1, 1);
+      model6.castShadow = true;
+      model6.receiveShadow = true;
+    },
+    (xhr) => console.log((xhr.loaded / xhr.total) * 100 + '% loaded'),
+    (error) => console.error(error)
+  );
+
+  //Model 7
+  loader.load(
+    './model/step-7.glb',
+    (gltf) => {
+      model7 = gltf.scene;
+      model7.scale.set(1, 1, 1);
+      model7.castShadow = true;
+      model7.receiveShadow = true;
+    },
+    (xhr) => console.log((xhr.loaded / xhr.total) * 100 + '% loaded'),
+    (error) => console.error(error)
+  );
+}
+
+/**
+ * Starts App
+ */
+window.addEventListener('load', function (event) {
   if ('xr' in navigator) {
     checkSupportedState();
-  } else {
-    alert('not supported!');
   }
-};
+});
