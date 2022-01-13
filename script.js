@@ -3,7 +3,8 @@ import { GLTFLoader } from './three.js/examples/jsm/loaders/GLTFLoader.js';
 
 // button to start XR experience
 let xrButton = document.getElementById('xr-button');
-let xrt = document.getElementById('tee11');
+let ui = document.getElementById('ui');
+
 // xr session
 let xrSession = null;
 // reference space used within an application
@@ -47,6 +48,10 @@ function onButtonClicked() {
     navigator.xr
       .requestSession('immersive-ar', {
         requiredFeatures: ['local', 'hit-test'],
+        optionalFeatures: [' dom-overlay', 'anchors'],
+        domOverlay: {
+          root: document.getElementById('xr-overlay'),
+        },
       })
       .then(onSessionStarted, onRequestSessionError);
   } else {
@@ -56,6 +61,8 @@ function onButtonClicked() {
 
 // on session started
 function onSessionStarted(session) {
+  ui.style.display = 'inline';
+
   xrSession = session;
   xrButton.innerHTML = 'Exit AR';
 
