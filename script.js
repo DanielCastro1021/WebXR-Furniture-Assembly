@@ -4,7 +4,7 @@ import { GLTFLoader } from './three.js/examples/jsm/loaders/GLTFLoader.js';
 // button to start XR experience
 let xrButton = document.getElementById('xr-button');
 let ui = document.getElementById('ui');
-
+let stepDescription = document.getElementById('ui-description');
 // xr session
 let xrSession = null;
 // reference space used within an application
@@ -29,6 +29,8 @@ let scene = null;
 let camera = null;
 // XR recitle (object pointing to where models should be placed)
 let reticle = null;
+//step controller
+let stepController = 0;
 
 function checkSupportedState() {
   navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
@@ -48,7 +50,7 @@ function onButtonClicked() {
     navigator.xr
       .requestSession('immersive-ar', {
         requiredFeatures: ['local', 'hit-test'],
-        optionalFeatures: [' dom-overlay', 'anchors'],
+        optionalFeatures: [' dom-overlay'],
         domOverlay: {
           root: document.getElementById('xr-overlay'),
         },
@@ -61,9 +63,11 @@ function onButtonClicked() {
 
 // on session started
 function onSessionStarted(session) {
-  ui.style.display = 'inline';
   xrSession = session;
+  ui.style.display = 'inline';
   xrButton.innerHTML = 'Exit AR';
+  stepController = 0;
+  updateStepDescription();
 
   // Show which type of DOM Overlay got enabled (if any)
   if (session.domOverlayState) {
@@ -72,8 +76,7 @@ function onSessionStarted(session) {
   }
 
   // screen and session events
-  //session.addEventListener('select', nextStep);
-  //session.addEventListener('squeeze', previousStep);
+  session.addEventListener('select', nextStep);
   session.addEventListener('end', onSessionEnded);
 
   // create a canvas element and WebGL context for rendering
@@ -116,122 +119,7 @@ function onSessionEnded(event) {
   gl = null;
 }
 
-// reneder all frames
-function onXRFrame(t, frame) {
-  let session = frame.session;
-  session.requestAnimationFrame(onXRFrame);
-  if (xrHitTestSource) {
-    // obtain hit test results by casting a ray from the center of device screen
-    // into AR view. Results indicate that ray intersected with one or more detected surfaces
-    const hitTestResults = frame.getHitTestResults(xrHitTestSource);
-    if (hitTestResults.length) {
-      // obtain a local pose at the intersection point
-      const pose = hitTestResults[0].getPose(xrRefSpace);
-      // place a reticle at the intersection point
-      reticle.matrix.fromArray(pose.transform.matrix);
-      reticle.visible = true;
-    }
-  } else {
-    // do not show a reticle if no surfaces are intersected
-    reticle.visible = false;
-  }
-  // bind our gl context that was created with WebXR to threejs renderer
-  gl.bindFramebuffer(gl.FRAMEBUFFER, session.renderState.baseLayer.framebuffer);
-  // render the scene
-  renderer.render(scene, camera);
-}
-
-// create virtual secene
-function initScene(gl, session) {
-  scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
-
-  loadFurnitureModels();
-
-  var light = new THREE.PointLight(0xffffff, 2, 100); // soft white light
-  light.position.z = 1;
-  light.position.y = 5;
-  scene.add(light);
-  // create and configure three.js renderer with XR support
-  renderer = new THREE.WebGLRenderer({
-    antialias: true,
-    alpha: true,
-    autoClear: true,
-    context: gl,
-  });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.xr.enabled = true;
-  renderer.xr.setReferenceSpaceType('local');
-  renderer.xr.setSession(session);
-  // simple sprite to indicate detected surfaces
-  reticle = new THREE.Mesh(
-    new THREE.RingBufferGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2),
-    new THREE.MeshPhongMaterial({ color: 0x0fff00 })
-  );
-  reticle.matrixAutoUpdate = false;
-  reticle.visible = false;
-  scene.add(reticle);
-}
-
-var click = 0;
-// Place VR Objet
-function placeObject() {
-  if (
-    reticle.visible &&
-    model1 &&
-    model2 &&
-    model3 &&
-    model4 &&
-    model5 &&
-    model6 &&
-    model7
-  ) {
-    click++;
-    reticle.visible = false;
-    if (click == 1) {
-      model1.position.setFromMatrixPosition(reticle.matrix);
-      scene.remove(reticle);
-      scene.add(model1);
-    }
-    if (click == 2) {
-      model2.position.setFromMatrixPosition(model1.matrix);
-      scene.remove(model1);
-      scene.add(model2);
-    }
-    if (click == 3) {
-      model3.position.setFromMatrixPosition(model2.matrix);
-      scene.remove(model2);
-      scene.add(model3);
-    }
-    if (click == 4) {
-      model4.position.setFromMatrixPosition(model3.matrix);
-      scene.remove(model3);
-      scene.add(model4);
-    }
-    if (click == 5) {
-      model5.position.setFromMatrixPosition(model4.matrix);
-      scene.remove(model4);
-      scene.add(model5);
-    }
-    if (click == 6) {
-      model6.position.setFromMatrixPosition(model5.matrix);
-      scene.remove(model5);
-      scene.add(model6);
-    }
-    if (click == 7) {
-      model7.position.setFromMatrixPosition(model6.matrix);
-      scene.remove(model6);
-      scene.add(model7);
-    }
-  }
-}
-
+// load all models glb needed
 function loadFurnitureModels() {
   var loader = new GLTFLoader();
   let x_scl = 0.5,
@@ -325,23 +213,168 @@ function loadFurnitureModels() {
   );
 }
 
+// reneder all frames
+function onXRFrame(t, frame) {
+  let session = frame.session;
+  session.requestAnimationFrame(onXRFrame);
+  if (xrHitTestSource) {
+    // obtain hit test results by casting a ray from the center of device screen
+    // into AR view. Results indicate that ray intersected with one or more detected surfaces
+    const hitTestResults = frame.getHitTestResults(xrHitTestSource);
+    if (hitTestResults.length) {
+      // obtain a local pose at the intersection point
+      const pose = hitTestResults[0].getPose(xrRefSpace);
+      // place a reticle at the intersection point
+      reticle.matrix.fromArray(pose.transform.matrix);
+      reticle.visible = true;
+    }
+  } else {
+    // do not show a reticle if no surfaces are intersected
+    reticle.visible = false;
+  }
+  // bind our gl context that was created with WebXR to threejs renderer
+  gl.bindFramebuffer(gl.FRAMEBUFFER, session.renderState.baseLayer.framebuffer);
+  // render the scene
+  renderer.render(scene, camera);
+}
+
+// create virtual scene
+function initScene(gl, session) {
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
+
+  loadFurnitureModels();
+
+  var light = new THREE.PointLight(0xffffff, 2, 100); // soft white light
+  light.position.z = 1;
+  light.position.y = 5;
+  scene.add(light);
+  // create and configure three.js renderer with XR support
+  renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    alpha: true,
+    autoClear: true,
+    context: gl,
+  });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.xr.enabled = true;
+  renderer.xr.setReferenceSpaceType('local');
+  renderer.xr.setSession(session);
+  // simple sprite to indicate detected surfaces
+  reticle = new THREE.Mesh(
+    new THREE.RingBufferGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2),
+    new THREE.MeshPhongMaterial({ color: 0x0fff00 })
+  );
+  reticle.matrixAutoUpdate = false;
+  reticle.visible = false;
+  scene.add(reticle);
+}
+
+function nextStep() {
+  if (
+    (reticle.visible == true && stepController == 0) ||
+    (stepController > 0 && stepController < 8)
+  ) {
+    stepController++;
+    switch (stepController) {
+      case 1:
+        reticle.visible = false;
+        model1.position.setFromMatrixPosition(reticle.matrix);
+        scene.remove(reticle);
+        scene.add(model1);
+        break;
+      case 2:
+        model2.position.setFromMatrixPosition(model1.matrix);
+        scene.remove(model1);
+        scene.add(model2);
+        break;
+      case 3:
+        model3.position.setFromMatrixPosition(model2.matrix);
+        scene.remove(model2);
+        scene.add(model3);
+        break;
+      case 4:
+        model4.position.setFromMatrixPosition(model3.matrix);
+        scene.remove(model3);
+        scene.add(model4);
+        break;
+      case 5:
+        model5.position.setFromMatrixPosition(model4.matrix);
+        scene.remove(model4);
+        scene.add(model5);
+        break;
+      case 6:
+        model6.position.setFromMatrixPosition(model5.matrix);
+        scene.remove(model5);
+        scene.add(model6);
+        break;
+      case 7:
+        model7.position.setFromMatrixPosition(model6.matrix);
+        scene.remove(model6);
+        scene.add(model7);
+        break;
+    }
+
+    updateStepDescription();
+  }
+}
+
+function updateStepDescription() {
+  if (stepController < 8) {
+    stepDescription.innerHTML = '<p>' + getStepDescription() + '</p>';
+  }
+}
+
+function getStepDescription() {
+  let description;
+  switch (stepController) {
+    case 0:
+      description =
+        'When green reticle shows, click on screen to place base of shelf.';
+      break;
+    case 1:
+      description =
+        ' Step 1 : Place lateral plank in left side of base plank, click screen to show result.';
+      break;
+    case 2:
+      description =
+        ' Step 2 : Place lateral plank in right side of base plank, click screen to show result.';
+      break;
+    case 3:
+      description =
+        ' Step 3 : Place small interior plank in top of base plank, click screen to show result.';
+      break;
+    case 4:
+      description =
+        ' Step 4 : Place big interior plank on top of the last small plank, click screen to show result.';
+      break;
+    case 5:
+      description =
+        ' Step 5 : Place another small interior plank in top of the big interior plank, click screen to show result.';
+      break;
+    case 6:
+      description =
+        ' Step 6 : Place last big plank on top of lateral planks and small interior plank, click screen to show result.';
+      break;
+    case 7:
+      description =
+        ' Step 7 :Terminou a experiência WebXR de Furniture Assembly';
+      break;
+  }
+  return description;
+}
+
 /**
- * Starts App
+ * Start App
  */
 window.addEventListener('load', function (event) {
   if ('xr' in navigator) {
     checkSupportedState();
   }
 });
-
-function clickButtonNext() {
-  let event = new CustomEvent('select');
-  document.dispatchEvent(event);
-}
-
-function clickButtonPrevious() {
-  let event = new CustomEvent('squeeze');
-  document.dispatchEvent(event);
-}
-
-screen.orientation.lock();
