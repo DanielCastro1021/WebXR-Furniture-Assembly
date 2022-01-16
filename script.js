@@ -39,7 +39,7 @@ function checkSupportedState() {
       xrButton.innerHTML = 'AR not found';
     }
     xrButton.addEventListener('click', onButtonClicked);
-    xrButton.disabled = !supported;
+    xrButton.disabled = false;
   });
 }
 
@@ -62,7 +62,6 @@ function onButtonClicked() {
 // on session started
 function onSessionStarted(session) {
   ui.style.display = 'inline';
-
   xrSession = session;
   xrButton.innerHTML = 'Exit AR';
 
@@ -73,7 +72,8 @@ function onSessionStarted(session) {
   }
 
   // screen and session events
-  session.addEventListener('select', placeObject);
+  //session.addEventListener('select', nextStep);
+  //session.addEventListener('squeeze', previousStep);
   session.addEventListener('end', onSessionEnded);
 
   // create a canvas element and WebGL context for rendering
@@ -110,7 +110,9 @@ function onRequestSessionError(ex) {
 function onSessionEnded(event) {
   xrSession = null;
   xrButton.innerHTML = 'Enter AR';
-  document.getElementById('info').innerHTML = '';
+  document.getElementById('info').innerHTML =
+    ' <h2>WebXR Furniture Assembly</h2><p>This app demonstrates the assembly of an IKEA shelf with the WebXR API.</p>';
+  ui.style.display = 'none';
   gl = null;
 }
 
@@ -148,21 +150,7 @@ function initScene(gl, session) {
     0.1,
     1000
   );
-  /*
-  // load our gltf model
-  var loader = new GLTFLoader();
-  loader.load(
-    './model/wheel.glb',
-    (gltf) => {
-      model = gltf.scene;
-      model.scale.set(0.1, 0.1, 0.1);
-      model.castShadow = true;
-      model.receiveShadow = true;
-    },
-    () => {},
-    (error) => console.error(error)
-  );
-*/
+
   loadFurnitureModels();
 
   var light = new THREE.PointLight(0xffffff, 2, 100); // soft white light
@@ -345,3 +333,15 @@ window.addEventListener('load', function (event) {
     checkSupportedState();
   }
 });
+
+function clickButtonNext() {
+  let event = new CustomEvent('select');
+  document.dispatchEvent(event);
+}
+
+function clickButtonPrevious() {
+  let event = new CustomEvent('squeeze');
+  document.dispatchEvent(event);
+}
+
+screen.orientation.lock();

@@ -2,32 +2,47 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <link rel="stylesheet" type="text/html" href="css/style.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="style.css" rel="stylesheet" type="text/css" />
 
     <title>WebXR</title>
   </head>
 
   <body>
-    <div id="overlay">
+    <div id="xr-overlay">
       <div class="info-area">
-        <div id="info"></div>
+        <div id="info">
+          <h2>WebXR Furniture Assembly</h2>
+          <p>This app demonstrates the assembly of an IKEA shelf with the WebXR API.</p>
+        </div>
+        <div id="info">
         <button id="xr-button" class="block" disabled>XR not found</button>
       </div>
-    </div>
-    <div id="xr-overlay">
-      <button id="ui" style="display: none">HELLO</button>
-    </div>
 
+      <div id="ui">
+
+        <div id="toast">
+          <p>Step Description</p>
+        </div>
+        <nav class="nav">
+          <button href="#" class="nav__link" >
+            <i class="material-icons nav__icon">arrow_back_ios</i>
+            <span class="nav__text">Next Step</span>
+          </button>
+          <button href="#" class="nav__link" >
+            <i class="material-icons nav__icon">arrow_forward_ios</i>
+            <span class="nav__text">Next Step</span>
+          </button>
+      
+        </nav>
+    </div>
     <script type="module" src="script.js"></script>
   </body>
 </html>
