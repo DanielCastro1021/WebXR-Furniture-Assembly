@@ -242,6 +242,7 @@ function onXRFrame(t, frame) {
       // place a reticle at the intersection point
       reticle.matrix.fromArray(pose.transform.matrix);
       reticle.visible = true;
+      $('#place-btn').prop('disabled', false);
     }
   } else {
     // do not show a reticle if no surfaces are intersected
@@ -316,6 +317,7 @@ function placeStepObject() {
       reticle.visible = false;
       scene.add(reticle);
       modelController = reticle;
+      $('#place-btn').prop('disabled', true);
       break;
     case 2:
       model1.position.setFromMatrixPosition(modelController.matrix);
