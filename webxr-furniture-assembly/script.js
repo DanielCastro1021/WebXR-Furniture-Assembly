@@ -1,5 +1,7 @@
 import * as THREE from './three.js/build/three.module.js';
 import { GLTFLoader } from './three.js/examples/jsm/loaders/GLTFLoader.js';
+import 'https://code.jquery.com/jquery-3.6.0.min.js';
+const $ = window.$;
 
 // button to start XR experience
 let xrButton = document.getElementById('xr-button');
@@ -31,7 +33,33 @@ let camera = null;
 let reticle = null;
 //step controller
 let stepController = 0;
+//model controller
+let modelController = null;
 
+$('#prev-btn').click(() => {
+  previousStep();
+});
+
+$('#next-btn').click(() => {
+  nextStep();
+});
+
+$('#step-selection-btn').click(() => {
+  openSideNav();
+});
+
+$('#close-sidenav-btn').click(() => {
+  closeSideNav();
+});
+
+function openSideNav() {
+  $('#step-side-nav').css('width', '250px');
+}
+
+function closeSideNav() {
+  $('#step-side-nav').css('width', '0');
+}
+openSideNav();
 function checkSupportedState() {
   navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
     if (supported) {
@@ -67,7 +95,6 @@ function onSessionStarted(session) {
   ui.style.display = 'inline';
   xrButton.innerHTML = 'Exit AR';
   stepController = 0;
-  updateStepDescription();
 
   // Show which type of DOM Overlay got enabled (if any)
   if (session.domOverlayState) {
@@ -76,7 +103,7 @@ function onSessionStarted(session) {
   }
 
   // screen and session events
-  session.addEventListener('select', nextStep);
+  //session.addEventListener('select', nextStep);
   session.addEventListener('end', onSessionEnded);
 
   // create a canvas element and WebGL context for rendering
@@ -266,67 +293,90 @@ function initScene(gl, session) {
   renderer.xr.enabled = true;
   renderer.xr.setReferenceSpaceType('local');
   renderer.xr.setSession(session);
-  // simple sprite to indicate detected surfaces
-  reticle = new THREE.Mesh(
-    new THREE.RingBufferGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2),
-    new THREE.MeshPhongMaterial({ color: 0x0fff00 })
-  );
-  reticle.matrixAutoUpdate = false;
-  reticle.visible = false;
-  scene.add(reticle);
+  nextStep();
 }
 
 function nextStep() {
   if (
-    (reticle.visible == true && stepController == 0) ||
-    (stepController > 0 && stepController < 8)
+    (stepController == 0 && reticle == null) ||
+    (reticle.visible == true && stepController == 1) ||
+    (stepController > 1 && stepController < 9)
   ) {
     stepController++;
-    switch (stepController) {
-      case 1:
-        reticle.visible = false;
-        model1.position.setFromMatrixPosition(reticle.matrix);
-        scene.remove(reticle);
-        scene.add(model1);
-        break;
-      case 2:
-        model2.position.setFromMatrixPosition(model1.matrix);
-        scene.remove(model1);
-        scene.add(model2);
-        break;
-      case 3:
-        model3.position.setFromMatrixPosition(model2.matrix);
-        scene.remove(model2);
-        scene.add(model3);
-        break;
-      case 4:
-        model4.position.setFromMatrixPosition(model3.matrix);
-        scene.remove(model3);
-        scene.add(model4);
-        break;
-      case 5:
-        model5.position.setFromMatrixPosition(model4.matrix);
-        scene.remove(model4);
-        scene.add(model5);
-        break;
-      case 6:
-        model6.position.setFromMatrixPosition(model5.matrix);
-        scene.remove(model5);
-        scene.add(model6);
-        break;
-      case 7:
-        model7.position.setFromMatrixPosition(model6.matrix);
-        scene.remove(model6);
-        scene.add(model7);
-        break;
-    }
-
-    updateStepDescription();
+    placeStepObject();
+  }
+}
+function previousStep() {
+  if (stepController > 1 && stepController < 9) {
+    stepController--;
+    placeStepObject();
   }
 }
 
+function placeStepObject() {
+  switch (stepController) {
+    case 1:
+      if (modelController !== null) {
+        scene.remove(modelController);
+      }
+      reticle = new THREE.Mesh(
+        new THREE.RingBufferGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2),
+        new THREE.MeshPhongMaterial({ color: 0x0fff00 })
+      );
+      reticle.matrixAutoUpdate = false;
+      reticle.visible = false;
+      scene.add(reticle);
+      modelController = reticle;
+      break;
+    case 2:
+      modelController.visible = false;
+      model1.position.setFromMatrixPosition(modelController.matrix);
+      scene.remove(modelController);
+      modelController = model1;
+      scene.add(modelController);
+      break;
+    case 3:
+      model2.position.setFromMatrixPosition(modelController.matrix);
+      scene.remove(modelController);
+      modelController = model2;
+      scene.add(modelController);
+      break;
+    case 4:
+      model3.position.setFromMatrixPosition(modelController.matrix);
+      scene.remove(modelController);
+      modelController = model3;
+      scene.add(modelController);
+      break;
+    case 5:
+      model4.position.setFromMatrixPosition(modelController.matrix);
+      scene.remove(modelController);
+      modelController = model4;
+      scene.add(modelController);
+      break;
+    case 6:
+      model5.position.setFromMatrixPosition(modelController.matrix);
+      scene.remove(modelController);
+      modelController = model5;
+      scene.add(modelController);
+      break;
+    case 7:
+      model6.position.setFromMatrixPosition(modelController.matrix);
+      scene.remove(modelController);
+      modelController = model6;
+      scene.add(modelController);
+      break;
+    case 8:
+      model7.position.setFromMatrixPosition(modelController.matrix);
+      scene.remove(modelController);
+      modelController = model7;
+      scene.add(modelController);
+      break;
+  }
+  updateStepDescription();
+}
+
 function updateStepDescription() {
-  if (stepController < 8) {
+  if (stepController < 9) {
     stepDescription.innerHTML = '<p>' + getStepDescription() + '</p>';
   }
 }
@@ -334,37 +384,37 @@ function updateStepDescription() {
 function getStepDescription() {
   let description;
   switch (stepController) {
-    case 0:
+    case 1:
       description =
         'When green reticle shows, click on screen to place base of shelf.';
       break;
-    case 1:
+    case 2:
       description =
         ' Step 1 : Place lateral plank in left side of base plank, click screen to show result.';
       break;
-    case 2:
+    case 3:
       description =
         ' Step 2 : Place lateral plank in right side of base plank, click screen to show result.';
       break;
-    case 3:
+    case 4:
       description =
         ' Step 3 : Place small interior plank in top of base plank, click screen to show result.';
       break;
-    case 4:
+    case 5:
       description =
         ' Step 4 : Place big interior plank on top of the last small plank, click screen to show result.';
       break;
-    case 5:
+    case 6:
       description =
         ' Step 5 : Place another small interior plank in top of the big interior plank, click screen to show result.';
       break;
-    case 6:
+    case 7:
       description =
         ' Step 6 : Place last big plank on top of lateral planks and small interior plank, click screen to show result.';
       break;
-    case 7:
+    case 8:
       description =
-        ' Step 7 :Terminou a experiência WebXR de Furniture Assembly';
+        'Parabéns. Terminou a experiência WebXR de Furniture Assembly';
       break;
   }
   return description;

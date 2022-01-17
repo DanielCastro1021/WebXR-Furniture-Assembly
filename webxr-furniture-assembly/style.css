@@ -38,35 +38,18 @@ div.info-area {
   display: none;
 }
 
-.nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: auto;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
-  background-color: #ffffff;
-  display: flex;
-  overflow-x: auto;
-}
-
-/*
-TOAST
-*/
 #ui-description {
-  min-width: 250px;
-  margin-left: -187.5px;
   background-color: #333;
   color: #fff;
   text-align: center;
   border-radius: 2px;
-  padding: 30px;
-
+  padding: 10px;
   position: fixed;
-  z-index: 1;
-  left: 50%;
-
   font-size: 17px;
+  position: absolute;
+  bottom: 0;
+  width: auto;
+  height: 90px;
 }
 
 * {
@@ -77,4 +60,51 @@ TOAST
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* Non-prefixed version, currently
                                 supported by Chrome, Edge, Opera and Firefox */
+}
+
+#control-btn-group {
+  position: absolute;
+  bottom: 100px;
+  width: 100%;
+  left: 2%;
+  height: 35px;
+  display: grid;
+  grid-template-columns: auto auto auto;
+}
+.btn {
+  width: 110px !important;
+}
+
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
 }

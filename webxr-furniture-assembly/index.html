@@ -2,17 +2,21 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="ScreenOrientation" content="autoRotate:disabled" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <title>WebXR</title>
+
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="style.css" rel="stylesheet" type="text/css" />
-
-    <title>WebXR</title>
   </head>
 
   <body>
@@ -20,18 +24,45 @@
       <div class="info-area">
         <div id="info">
           <h2>WebXR Furniture Assembly</h2>
-          <p>This app demonstrates the assembly of an IKEA shelf with the WebXR API.</p>
+          <p>
+            This app demonstrates the assembly of an IKEA shelf with the WebXR
+            API.
+          </p>
         </div>
         <div id="info">
-        <button id="xr-button" class="block" disabled>XR not found</button>
-      </div>
-
-      <div id="ui">
-        <div id="ui-description" class="nav" >
-        
+          <button id="xr-button" class="block btn btn-primary" disabled>
+            XR not found
+          </button>
         </div>
+      </div>
+      <div id="ui">
+        <div id="ui-description" class="nav"></div>
+        <div id="control-btn-group">
+          <button id="prev-btn" type="button" class="btn btn-primary">
+            Previous
+          </button>
 
+          <button id="step-selection-btn" type="button" class="btn btn-primary">
+            Select Step
+          </button>
+
+          <button id="next-btn" type="button" class="btn btn-primary">
+            Next
+          </button>
+        </div>
+      </div>
     </div>
+
+    <div id="step-side-nav" class="sidenav">
+      <a href="javascript:void(0)" id="close-sidenav-btn" class="closebtn"
+        >&times;</a
+      >
+      <a class="ar-object" id="1" href="#">Step 1</a>
+      <a class="ar-object" id="2" href="#">Step 2</a>
+      <a class="ar-object" id="3" href="#">item_3</a>
+      <a class="ar-object" id="4" href="#">item_4</a>
+    </div>
+
     <script type="module" src="script.js"></script>
   </body>
 </html>
