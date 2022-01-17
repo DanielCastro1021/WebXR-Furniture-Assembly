@@ -44,22 +44,10 @@ $('#next-btn').click(() => {
   nextStep();
 });
 
-$('#step-selection-btn').click(() => {
-  openSideNav();
+$('#place-btn').click(() => {
+  nextStep();
 });
 
-$('#close-sidenav-btn').click(() => {
-  closeSideNav();
-});
-
-function openSideNav() {
-  $('#step-side-nav').css('width', '250px');
-}
-
-function closeSideNav() {
-  $('#step-side-nav').css('width', '0');
-}
-openSideNav();
 function checkSupportedState() {
   navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
     if (supported) {
@@ -306,6 +294,7 @@ function nextStep() {
     placeStepObject();
   }
 }
+
 function previousStep() {
   if (stepController > 1 && stepController < 9) {
     stepController--;
@@ -329,7 +318,6 @@ function placeStepObject() {
       modelController = reticle;
       break;
     case 2:
-      modelController.visible = false;
       model1.position.setFromMatrixPosition(modelController.matrix);
       scene.remove(modelController);
       modelController = model1;
@@ -376,8 +364,21 @@ function placeStepObject() {
 }
 
 function updateStepDescription() {
-  if (stepController < 9) {
+  if (stepController < 9 && stepController > 0) {
     stepDescription.innerHTML = '<p>' + getStepDescription() + '</p>';
+    if (stepController == 1) {
+      $('#prev-btn').css('display', 'none');
+      $('#next-btn').css('display', 'none');
+      $('#place-btn').css('display', 'inline');
+    } else if (stepController == 8) {
+      $('#prev-btn').css('display', 'inline');
+      $('#next-btn').css('display', 'none');
+      $('#place-btn').css('display', 'none');
+    } else {
+      $('#prev-btn').css('display', 'inline');
+      $('#next-btn').css('display', 'inline');
+      $('#place-btn').css('display', 'none');
+    }
   }
 }
 
@@ -386,31 +387,31 @@ function getStepDescription() {
   switch (stepController) {
     case 1:
       description =
-        'When green reticle shows, click on screen to place base of shelf.';
+        'Step 1 : When green reticle shows, click on screen to place base of shelf.';
       break;
     case 2:
       description =
-        ' Step 1 : Place lateral plank in left side of base plank, click screen to show result.';
+        ' Step 2 : Place lateral plank in left side of base plank, click screen to show result.';
       break;
     case 3:
       description =
-        ' Step 2 : Place lateral plank in right side of base plank, click screen to show result.';
+        ' Step 3 : Place lateral plank in right side of base plank, click screen to show result.';
       break;
     case 4:
       description =
-        ' Step 3 : Place small interior plank in top of base plank, click screen to show result.';
+        ' Step 4 : Place small interior plank in top of base plank, click screen to show result.';
       break;
     case 5:
       description =
-        ' Step 4 : Place big interior plank on top of the last small plank, click screen to show result.';
+        ' Step 5 : Place big interior plank on top of the last small plank, click screen to show result.';
       break;
     case 6:
       description =
-        ' Step 5 : Place another small interior plank in top of the big interior plank, click screen to show result.';
+        ' Step 6 : Place another small interior plank in top of the big interior plank, click screen to show result.';
       break;
     case 7:
       description =
-        ' Step 6 : Place last big plank on top of lateral planks and small interior plank, click screen to show result.';
+        ' Step 7 : Place last big plank on top of lateral planks and small interior plank, click screen to show result.';
       break;
     case 8:
       description =
