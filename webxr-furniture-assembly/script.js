@@ -417,7 +417,7 @@ function getStepDescription() {
       break;
     case 8:
       description =
-        'Parabéns. Terminou a experiência WebXR de Furniture Assembly';
+        'Congrats. You have finnished the WebXR Furniture Assembly Tutorial.';
       break;
   }
   return description;
