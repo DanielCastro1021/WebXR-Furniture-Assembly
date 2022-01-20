@@ -42,8 +42,6 @@ let modelController = null;
 //model set
 let model = 1;
 
-openNav();
-
 $('#prev-btn').click(() => {
   previousStep();
 });
